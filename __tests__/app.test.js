@@ -3,6 +3,7 @@ const app = require('../app')
 const db = require('../db/connection')
 const data = require('../db/data/test-data/index')
 const seed = require('../db/seeds/seed')
+const fs = require('fs')
 
 afterAll(() => {
     db.end();
@@ -37,5 +38,16 @@ describe('/api/topics', () =>{
         )
     })
 })
+describe('GET /api endpoint', () =>{
+    test('Responds with a JSON object containing all of the available endpoints', () =>{
+        const endpointData = fs.readFileSync('endpoints.json', 'utf-8');
+        const expectedEndpoints = JSON.parse(endpointData);
 
-
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(response =>{
+            expect(response.body).toEqual(expectedEndpoints)
+        })
+    })
+})

@@ -1,4 +1,5 @@
-const {getTopics} = require('./models')
+const {getTopics, getAllEndPoints} = require('./models')
+const endpoints = require('./endpoints.json')
 
 function getAllTopics(req, res, next){
     getTopics().then((result) =>{
@@ -7,4 +8,12 @@ function getAllTopics(req, res, next){
         next(err)
     }) 
 }
-module.exports = {getAllTopics}
+
+function getApi(req, res, next) {
+    getAllEndPoints().then(endpoints => {
+        res.status(200).json(endpoints);
+    }).catch(err => {
+        next(err);
+    });
+}
+module.exports = {getAllTopics, getApi}
