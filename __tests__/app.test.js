@@ -26,9 +26,7 @@ describe('/api/topics', () =>{
         .get('/api/topics')
         .expect(200)
         .then(({body}) =>{
-            console.log(body)
             const { topics } = body;
-            console.log(topics)
             expect(topics.length).toBe(3);
                 topics.forEach((topic) =>{
                 expect(topic).toHaveProperty('slug');
@@ -50,4 +48,30 @@ describe('GET /api endpoint', () =>{
             expect(response.body).toEqual(expectedEndpoints)
         })
     })
+})
+describe('GET /api/articles/article_id', () =>{
+    test('Responds with the correct article based on the passed article ID', () =>{
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) =>{
+            const {article} = body
+            expect(article).toHaveProperty('author')
+            expect(article).toHaveProperty('title')
+            expect(article).toHaveProperty('article_id')
+            expect(article).toHaveProperty('body')
+            expect(article).toHaveProperty('topic')
+            expect(article).toHaveProperty('created_at')
+            expect(article).toHaveProperty('votes')
+            expect(article).toHaveProperty('article_img_url')
+        })
+    })
+    test('GET:404 sends an appropriate status and error message when given a non-existent id', () => {
+        return request(app)
+          .get('/api/articles/999')
+          .expect(404)
+          .then((article) => {
+            expect(article.body.message).toBe('Article not found');
+          });
+      });
 })

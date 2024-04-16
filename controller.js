@@ -1,4 +1,4 @@
-const {getTopics, getAllEndPoints} = require('./models')
+const {getTopics, getAllEndPoints, getArtcileById} = require('./models')
 const endpoints = require('./endpoints.json')
 
 function getAllTopics(req, res, next){
@@ -16,4 +16,14 @@ function getApi(req, res, next) {
         next(err);
     });
 }
-module.exports = {getAllTopics, getApi}
+
+function articleId(req, res, next) {
+    const { article_id } = req.params;
+    getArtcileById(article_id)
+    .then((article) => {
+        res.status(200).send({ article });
+    }).catch((err) => {
+        next(err);
+    });
+}
+module.exports = {getAllTopics, getApi, articleId}
