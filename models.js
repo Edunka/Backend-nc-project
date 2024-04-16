@@ -28,4 +28,23 @@ function getArtcileById(article_id) {
         return result.rows[0];
     });
 }
-module.exports={getTopics, getAllEndPoints, getArtcileById}
+
+
+function getArticleAndSort(sort_by = 'created_at', order = 'desc'){
+    const validSortBys = ['created_at']
+        
+    if (!validSortBys.includes(sort_by)) {
+        return Promise.reject({ status: 400, message: 'invalid query value'})
+    }
+    
+        
+    let sqlString = `SELECT *, (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles `;
+    sqlString += `ORDER BY ${sort_by} `;
+    sqlString += `${order.toUpperCase()}`;
+
+    return db.query(sqlString).then(({rows}) =>{
+        return rows
+    })
+}
+
+module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort}

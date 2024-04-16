@@ -75,3 +75,37 @@ describe('GET /api/articles/article_id', () =>{
           });
       });
 })
+
+describe('GET /api/articles', () =>{
+    test('returns an array of article objects', () =>{
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) =>{
+         
+            const { articles } = body
+            console.log(articles)
+            articles.forEach((article) =>{
+                expect(article).toMatchObject({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(String),
+                    
+                })
+            })
+        })
+    })
+    test('returns 400 for invalid sort_by parameter', () => {
+        return request(app)
+        .get('/api/articles?sort_by=invalid_sort')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('invalid query value');
+        });
+    })
+})
