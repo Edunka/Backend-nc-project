@@ -82,9 +82,7 @@ describe('GET /api/articles', () =>{
         .get('/api/articles')
         .expect(200)
         .then(({body}) =>{
-         
             const { articles } = body
-            console.log(articles)
             articles.forEach((article) =>{
                 expect(article).toMatchObject({
                     author: expect.any(String),
@@ -108,4 +106,39 @@ describe('GET /api/articles', () =>{
             expect(response.body.message).toBe('invalid query value');
         });
     })
+})
+
+describe('GET /api/articles/:article_id/comments', () =>{
+    test('GET 200 returns an array of comments from an article ID sorted in descending order', () =>{
+        return request(app)
+        .get('/api/articles/5/comments')
+        .expect(200)
+        .then(({ body }) => {
+          const comments = body.article;
+          comments.forEach(comment => {
+            expect(comment).toHaveProperty('comment_id');
+            expect(comment).toHaveProperty('votes');
+            expect(comment).toHaveProperty('created_at');
+            expect(comment).toHaveProperty('author');
+            expect(comment).toHaveProperty('body');
+            expect(comment).toHaveProperty('article_id');
+          });
+        });
+    })
+    test('returns 400 for invalid sort_by parameter', () => {
+        return request(app)
+        .get('/api/articles?sort_by=invalid_sort')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('invalid query value');
+        });
+    })
+    test('GET:404 sends an appropriate status and error message when given a non-existent id', () => {
+        return request(app)
+          .get('/api/articles/21/comments')
+          .expect(404)
+          .then((article) => {
+            expect(article.body.message).toBe('Article not found');
+          });
+      });
 })

@@ -47,4 +47,23 @@ function getArticleAndSort(sort_by = 'created_at', order = 'desc'){
     })
 }
 
-module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort}
+function getCommentsForArticle(article_id, sort_by = 'created_at', order = 'desc'){
+    const validSortBys = ['created_at']
+
+    if (!validSortBys.includes(sort_by)) {
+        return Promise.reject({ status: 400, message: 'invalid query value'})
+    }
+
+    let sqlString = `SELECT * FROM comments WHERE article_id = $1 `;
+    sqlString += `ORDER BY ${sort_by} ${order.toUpperCase()}`;
+
+    return db.query(sqlString, [article_id])
+        .then(({ rows }) => {
+            if (rows.length === 0) {
+                return Promise.reject({ status: 404, message: "Article not found" });
+            }
+            return rows;
+        })
+
+}
+module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle}
