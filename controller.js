@@ -1,4 +1,4 @@
-const {getTopics, getAllEndPoints, getArtcileById} = require('./models')
+const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort} = require('./models')
 const endpoints = require('./endpoints.json')
 
 function getAllTopics(req, res, next){
@@ -26,4 +26,14 @@ function articleId(req, res, next) {
         next(err);
     });
 }
-module.exports = {getAllTopics, getApi, articleId}
+
+function getArticleSort(req, res, next) {
+    const { sort_by } = req.query
+    const { order } = req.query
+    getArticleAndSort(sort_by, order).then((articles) => {
+        res.status(200).send({ articles });
+    }).catch((err) => {
+        next(err);
+    })
+};
+module.exports = {getAllTopics, getApi, articleId, getArticleSort}
