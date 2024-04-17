@@ -142,3 +142,32 @@ describe('GET /api/articles/:article_id/comments', () =>{
           });
       });
 })
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('POST 201: adds a comment for an article', () => {
+        const newComment = {
+            username: 'butter_bridge',
+            body: 'This is a test comment'
+        };
+        const article_id = 1;
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`) 
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(comment.body).toBe('This is a test comment');
+                expect(comment.author).toBe('butter_bridge')
+            });
+    
+    });
+    test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+        return request(app)
+          .post('/api/articles/999/comments')
+          .expect(400)
+          .then((response) => {
+            expect(response.body.message).toBe('Bad request');
+          });
+      });
+    
+});

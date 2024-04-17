@@ -1,4 +1,4 @@
-const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle} = require('./models')
+const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle} = require('./models')
 const endpoints = require('./endpoints.json')
 
 function getAllTopics(req, res, next){
@@ -48,4 +48,21 @@ function getComments(req, res, next){
     })
 }   
 
-module.exports = {getAllTopics, getApi, articleId, getArticleSort, getComments}
+function addComment(req, res, next) {
+    const newComment = {
+        username: req.body.username,
+        body: req.body.body,
+        article_id: req.params.article_id
+    };
+    addCommentForArticle(newComment)
+        .then((result) => {
+            const comment = result.rows[0];
+            res.status(201).send({ comment });
+        })
+        .catch((err) => {
+            next(err);
+        });
+}
+
+
+module.exports = {getAllTopics, getApi, articleId, getArticleSort, getComments, addComment}
