@@ -66,4 +66,13 @@ function getCommentsForArticle(article_id, sort_by = 'created_at', order = 'desc
         })
 
 }
-module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle}
+
+function addCommentForArticle(newComment) {
+    const { username, body, article_id } = newComment;
+    const votesValue = newComment.votes || 0;
+    return db.query(
+        `INSERT INTO comments (author, body, article_id, votes) VALUES ($1, $2, $3, $4) RETURNING *;`,
+        [username, body, article_id, votesValue]
+    )
+}
+module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle}
