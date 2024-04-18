@@ -258,3 +258,20 @@ describe('DELETE /api/comments/:comment_id', () => {
         })
     })
 });
+
+describe('GET 200: /api/users', () =>{
+    test('GET 200: responds with an array of objects containing all users', () =>{
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) =>{
+            const {users} = body;
+            users.forEach((user) =>{
+               expect(user).toHaveProperty('username')
+               expect(user).toHaveProperty('name')
+               expect(user).toHaveProperty('avatar_url') 
+            })
+            
+        })
+    })
+})
