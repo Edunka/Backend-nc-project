@@ -158,10 +158,13 @@ describe('POST /api/articles/:article_id/comments', () => {
                 const { comment } = body;
                 expect(comment.body).toBe('This is a test comment');
                 expect(comment.author).toBe('butter_bridge')
+                expect(comment.votes).toBe(0)
+                expect(comment.article_id).toBe(1)
+                
             });
     
     });
-    test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+    test('GET:400 sends an appropriate status and error message when given a valid but non-existent id', () => {
         return request(app)
           .post('/api/articles/999/comments')
           .expect(400)
@@ -169,5 +172,73 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(response.body.message).toBe('Bad request');
           });
       });
-    
 });
+
+describe('PATCH /api/articles/:articles_id', () =>{
+    test('PATCH 200: change vote count by increment for article by article_id', () =>{
+        const newVote = {
+            inc_votes: 100,
+            article_id: 1
+        }
+        return request(app)
+        .patch(`/api/articles/${newVote.article_id}`)
+        .send(newVote)
+        .expect(200)
+        .then((response) =>{
+            const {vote} = response.body;
+            expect(vote).toBe(200)
+        })
+    })
+    test('PATCH 200: change vote count by decrement for article by article_id', () =>{
+        const newVote = {
+            inc_votes: -200,
+            article_id: 1
+        }
+        return request(app)
+        .patch(`/api/articles/${newVote.article_id}`)
+        .send(newVote)
+        .expect(200)
+        .then((response) =>{
+            const {vote} = response.body;
+            expect(vote).toBe(-100)
+        })
+    })
+    test('PATCH 404: article_id not found', () => {
+        const newVote = {
+            inc_votes: 100,
+            article_id: 9999
+        }
+        return request(app)
+            .patch(`/api/articles/${newVote.article_id}`)
+            .send(newVote)
+            .expect(404)
+            .then((response) =>{
+                expect(response.body.message).toBe('Article not found')
+            })
+    })
+    test('PATCH 400: invalid vote', () => {
+        const newVote = {
+            inc_votes: 'not a number',
+            article_id: 1
+        }
+        return request(app)
+            .patch(`/api/articles/${newVote.article_id}`)
+            .send(newVote)
+            .expect(400)
+            .then((response) =>{
+                expect(response.body.message).toBe('Vote must be a number')
+            })
+    });
+    test('PATCH 400: missing article id', () => {
+        const newVote = {
+            inc_votes: 'not a number'
+        }
+        return request(app)
+            .patch(`/api/articles/${newVote.article_id}`)
+            .send(newVote)
+            .expect(400)
+            .then((response) =>{
+                expect(response.body.message).toBe('Missing article ID')
+            })
+    });
+})
