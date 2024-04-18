@@ -94,4 +94,15 @@ function updateVote(newVote) {
         return result.rows[0].votes
     })
 }
-module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote}
+
+function deleteComment(comment_id){
+    if(isNaN(comment_id)){
+        return Promise.reject({status: 400, message: 'Comment ID must be a number'})
+    }
+    return db.query(
+        `DELETE FROM comments WHERE comment_id = $1`, [comment_id]
+    ).then((result) =>{
+        return result.rows
+    })
+}
+module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment}

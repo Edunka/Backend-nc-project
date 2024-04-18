@@ -1,4 +1,4 @@
-const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote} = require('./models')
+const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment} = require('./models')
 const endpoints = require('./endpoints.json')
 
 function getAllTopics(req, res, next){
@@ -64,7 +64,6 @@ function addComment(req, res, next) {
         });
 }
 
-
 function updateVoteCount(req, res, next){
     const newVote = req.body;
     updateVote(newVote).then((vote) => {
@@ -75,5 +74,13 @@ function updateVoteCount(req, res, next){
 }
 
 
+function deleteCommentById(req, res, next){
+    const {comment_id} = req.params;
+    deleteComment(comment_id).then(() =>{
+        res.status(204).send();
+    }).catch((err) =>{
+        next(err)
+    });
+}
 
-module.exports = {getAllTopics, getApi, articleId, getArticleSort, getComments, addComment, updateVoteCount}
+module.exports = {getAllTopics, getApi, articleId, getArticleSort, getComments, addComment, updateVoteCount, deleteCommentById}
