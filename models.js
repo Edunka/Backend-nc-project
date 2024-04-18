@@ -105,4 +105,13 @@ function deleteComment(comment_id){
         return result.rows
     })
 }
-module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment}
+
+
+function getAllUsers(){
+    return db.query('SELECT * FROM users').then((results) =>{
+        return results
+    })
+}
+
+
+module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment, getAllUsers}
