@@ -5,15 +5,15 @@ const data = require('../db/data/test-data/index')
 const seed = require('../db/seeds/seed')
 const fs = require('fs')
 
-afterAll(() => {
-    db.end();
-});
+
   
   
 beforeEach(() => {
     return seed(data);
 });
-
+afterAll(() => {
+    db.end();
+});
 describe('/api/topics', () =>{
     test('GET 200: responds with status code 200', () =>{
         return request(app).get('/api/topics').expect(200)
@@ -242,3 +242,19 @@ describe('PATCH /api/articles/:articles_id', () =>{
             })
     });
 })
+
+describe('DELETE /api/comments/:comment_id', () => {
+    test('DELETE 204: deletes a comment from the comment table via the provided comment ID but does not send no body back', () => {
+        return request(app)
+            .delete('/api/comments/1')
+            .expect(204);
+    });
+    test('DELETE 400: responds with an appropriate status and error message when given a invalid id', () =>{
+        return request(app)
+        .delete('/api/comments/not-an-id')
+        .expect(400)
+        .then((response) =>{
+            expect(response.body.message).toBe('Comment ID must be a number')
+        })
+    })
+});
