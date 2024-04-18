@@ -75,4 +75,23 @@ function addCommentForArticle(newComment) {
         [username, body, article_id, votesValue]
     )
 }
-module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle}
+
+
+function updateVote(newVote) {
+    if(!newVote.article_id){
+        return Promise.reject({status: 400, message: 'Missing article ID'})
+    }
+    if (isNaN(newVote.inc_votes)) {
+        return Promise.reject({ status: 400, message: 'Vote must be a number' });
+    }
+    return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING votes`,
+        [newVote.inc_votes, newVote.article_id]
+    )
+    .then((result) =>{
+        if(result.rows.length === 0){
+            return Promise.reject({status: 404, message: 'Article not found'})
+        }
+        return result.rows[0].votes
+    })
+}
+module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote}
