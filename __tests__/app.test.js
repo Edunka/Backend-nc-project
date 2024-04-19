@@ -83,6 +83,7 @@ describe('GET /api/articles', () =>{
         .expect(200)
         .then(({body}) =>{
             const { articles } = body
+            expect(articles.length).toBe(13)
             articles.forEach((article) =>{
                 expect(article).toMatchObject({
                     author: expect.any(String),
@@ -105,6 +106,34 @@ describe('GET /api/articles', () =>{
         .then((response) => {
             expect(response.body.message).toBe('invalid query value');
         });
+    })
+    test('returns articles filtered by specific topic', () => {
+        return request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles.length).toBe(1)
+                articles.forEach((article) => {
+                    expect(article.topic).toBe('cats');
+                });
+            });
+    })
+    test('GET 400: returns 400 error for invalid order parameter', () => {
+        return request(app)
+            .get('/api/articles?order=invalid_order')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Invalid query value for order');
+            });
+    })
+    test('GET 400: returns 400 error for non-existent topic', () => {
+        return request(app)
+            .get('/api/articles?topic=nonexistent')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('topic doesnt exist');
+            });
     })
 })
 
@@ -275,3 +304,4 @@ describe('GET 200: /api/users', () =>{
         })
     })
 })
+

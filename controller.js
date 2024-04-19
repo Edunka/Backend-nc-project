@@ -1,4 +1,4 @@
-const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment, getAllUsers} = require('./models')
+const {getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment, getAllUsers, filterByTopic} = require('./models')
 const endpoints = require('./endpoints.json')
 
 function getAllTopics(req, res, next){
@@ -30,7 +30,8 @@ function articleId(req, res, next) {
 function getArticleSort(req, res, next) {
     const { sort_by } = req.query
     const { order } = req.query
-    getArticleAndSort(sort_by, order).then((articles) => {
+    const {topic} = req.query
+    getArticleAndSort(sort_by, order, topic).then((articles) => {
         res.status(200).send({ articles });
     }).catch((err) => {
         next(err);

@@ -29,23 +29,41 @@ function getArtcileById(article_id) {
     });
 }
 
+//here
+function getArticleAndSort(sort_by = 'created_at', order = 'desc', topic) {
+    const validSortBys = ['created_at'];
+    const validOrders = ['asc', 'desc'];
+    const params = [];
 
-function getArticleAndSort(sort_by = 'created_at', order = 'desc'){
-    const validSortBys = ['created_at']
-        
     if (!validSortBys.includes(sort_by)) {
-        return Promise.reject({ status: 400, message: 'invalid query value'})
+        return Promise.reject({ status: 400, message: 'invalid query value' });
     }
-    
-        
-    let sqlString = `SELECT *, (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles `;
-    sqlString += `ORDER BY ${sort_by} `;
-    sqlString += `${order.toUpperCase()}`;
 
-    return db.query(sqlString).then(({rows}) =>{
-        return rows
-    })
+    if (!validOrders.includes(order.toLowerCase())) {
+        return Promise.reject({ status: 400, message: 'Invalid query value for order' });
+    }
+
+    let sqlString = `SELECT articles.*, (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles`;
+
+    if (topic) {
+        return db.query('SELECT DISTINCT topic FROM articles WHERE topic = $1', [topic])
+            .then(({ rows }) => {
+                if (rows.length === 0) {
+                    return Promise.reject({ status: 400, message: 'topic doesnt exist' });
+                }
+                sqlString += ` WHERE articles.topic = $1`;
+                params.push(topic);
+            })
+            .then(() => {
+                sqlString += ` ORDER BY articles.${sort_by} ${order.toUpperCase()}`;
+                return db.query(sqlString, params).then(({ rows }) => rows);
+            });
+    } else {
+        sqlString += ` ORDER BY articles.${sort_by} ${order.toUpperCase()}`;
+        return db.query(sqlString).then(({ rows }) => rows);
+    }
 }
+
 
 function getCommentsForArticle(article_id, sort_by = 'created_at', order = 'desc'){
     const validSortBys = ['created_at']
@@ -112,6 +130,5 @@ function getAllUsers(){
         return results
     })
 }
-
 
 module.exports={getTopics, getAllEndPoints, getArtcileById, getArticleAndSort, getCommentsForArticle, addCommentForArticle, updateVote, deleteComment, getAllUsers}
