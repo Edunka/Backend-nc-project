@@ -29,6 +29,9 @@ app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.get('/api/users', getUsers)
 
+
+
+
 app.use((err, req, res, next) => {
     if (err.status && err.message) {
         res.status(err.status).send({ message: err.message });
