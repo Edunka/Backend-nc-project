@@ -49,6 +49,7 @@ describe('GET /api endpoint', () =>{
         })
     })
 })
+//here
 describe('GET /api/articles/article_id', () =>{
     test('Responds with the correct article based on the passed article ID', () =>{
         return request(app)
@@ -64,6 +65,7 @@ describe('GET /api/articles/article_id', () =>{
             expect(article).toHaveProperty('created_at')
             expect(article).toHaveProperty('votes')
             expect(article).toHaveProperty('article_img_url')
+            expect(article).toHaveProperty('comment_count')
         })
     })
     test('GET:404 sends an appropriate status and error message when given a non-existent id', () => {
@@ -74,6 +76,16 @@ describe('GET /api/articles/article_id', () =>{
             expect(article.body.message).toBe('Article not found');
           });
       });
+      test('Responds with the comment count for a particular article', () =>{
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) =>{
+            const {article} = body
+            expect(article).toHaveProperty('comment_count')
+            expect(article.comment_count).toBe('11')
+        })
+      })
 })
 
 describe('GET /api/articles', () =>{
