@@ -4,4 +4,3 @@ exports.topicData = require('./topics.js');
 exports.userData = require('./users.js');
 
 
-module.exports = {articleData, commentData, topicData, userData}
