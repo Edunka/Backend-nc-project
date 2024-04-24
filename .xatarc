@@ -1,0 +1,7 @@
+{
+  "databaseURL": "https://Edunka-s-workspace-019she.eu-west-1.xata.sh/db/nc-database-new",
+  "codegen": {
+    "output": "src/xata.js",
+    "moduleType": "cjs"
+  }
+}
