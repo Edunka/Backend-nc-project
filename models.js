@@ -31,7 +31,7 @@ function getArtcileById(article_id) {
 
 
 function getArticleAndSort(sort_by = 'created_at', order = 'desc', topic) {
-    const validSortBys = ['created_at'];
+    const validSortBys = ['created_at', 'votes', 'comment_count'];
     const validOrders = ['asc', 'desc'];
     const params = [];
 
