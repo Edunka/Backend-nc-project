@@ -119,6 +119,7 @@ describe('GET /api/articles', () =>{
             expect(response.body.message).toBe('invalid query value');
         });
     })
+    
     test('returns articles filtered by specific topic', () => {
         return request(app)
             .get('/api/articles?topic=cats')

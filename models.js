@@ -43,7 +43,7 @@ function getArticleAndSort(sort_by = 'created_at', order = 'desc', topic) {
         return Promise.reject({ status: 400, message: 'Invalid query value for order' });
     }
 
-    let sqlString = `SELECT articles.*, (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles`;
+    let sqlString = `SELECT articles.*, COALESCE((SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id), 0) AS comment_count FROM articles;`;
 
     if (topic) {
         return db.query('SELECT DISTINCT topic FROM articles WHERE topic = $1', [topic])
